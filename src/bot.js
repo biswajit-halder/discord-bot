@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const { Client, Events, GatewayIntentBits, Partials } = require('discord.js');
+const { Client, Events, GatewayIntentBits, Partials, WebhookClient } = require('discord.js');
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds, 
@@ -9,6 +9,11 @@ const client = new Client({
         GatewayIntentBits.GuildMessageReactions
     ],
     partials: [Partials.Message, Partials.Channel, Partials.Reaction]
+});
+
+const webhookclient = new WebhookClient({
+    id: process.env.WEBHOOK_ID,
+    token: process.env.WEBHOOK_TOKEN
 });
 
 const PREFIX = "$";
@@ -59,6 +64,10 @@ client.on(Events.MessageCreate, async (message) => {
             } catch (error) {
                 message.channel.send("I do not have permissions to ban this user :(")
             }
+        } else if (CMD_NAME === 'announce') {
+            const msg = args.join(" ");
+            console.log(msg);
+            webhookclient.send(msg);
         }
     }
 });
