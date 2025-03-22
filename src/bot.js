@@ -45,6 +45,18 @@ client.on(Events.MessageCreate, async (message) => {
             } else {
                 message.channel.send("That member was not found");
             }
+        } else if (CMD_NAME === 'ban') {
+            if (!message.member.permissions.has('BanMembers'))
+                return message.reply('You do not have permission to use that command');
+
+            if (args.length === 0) return message.reply("Please provide an ID");
+
+            try {
+                const user = await message.guild.members.ban(args[0]);
+                message.channel.send(`Banned user successfully!`)
+            } catch (error) {
+                message.channel.send("I do not have permissions to ban this user :(")
+            }
         }
     }
 });
