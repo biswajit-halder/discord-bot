@@ -1,12 +1,14 @@
 require('dotenv').config();
 
-const { Client, Events, GatewayIntentBits } = require('discord.js');
+const { Client, Events, GatewayIntentBits, Partials } = require('discord.js');
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds, 
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent
-    ]
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMessageReactions
+    ],
+    partials: [Partials.Message, Partials.Channel, Partials.Reaction]
 });
 
 const PREFIX = "$";
@@ -60,3 +62,41 @@ client.on(Events.MessageCreate, async (message) => {
         }
     }
 });
+
+client.on(Events.MessageReactionAdd, (reaction, user) => {
+    const { name } = reaction.emoji;
+    const member = reaction.message.guild.members.cache.get(user.id);
+    if (reaction.message.id === '1351994839771643905') {
+        switch (name) {
+            case '🍎'://apple
+                member.roles.add('1351982596564848822');
+                break;
+            case '🍌'://banana
+                member.roles.add('1351982696384958555');
+                break;
+            case '🍑'://peach
+                member.roles.add('1351982784045912064');
+                break;
+        }
+    }
+});
+
+client.on(Events.MessageReactionRemove, (reaction, user) => {
+    const { name } = reaction.emoji;
+    const member = reaction.message.guild.members.cache.get(user.id);
+    if (reaction.message.id === '1351994839771643905') {
+        switch (name) {
+            case '🍎'://apple
+                member.roles.remove('1351982596564848822');
+                break;
+            case '🍌'://banana
+                member.roles.remove('1351982696384958555');
+                break;
+            case '🍑'://peach
+                member.roles.remove('1351982784045912064');
+                break;
+        }
+    }
+});
+
+client.login(process.env.DISCORDJS_BOT_TOKEN);
